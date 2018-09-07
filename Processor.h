@@ -1,3 +1,8 @@
+#include "../AKTools/akio.h"
+
+
+#undef DEBUG_LOG_MODE
+#define DEBUG_LOG_MODE 0
 
 
 #define PROC_BUF_SIZE 1024

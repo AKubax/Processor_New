@@ -4,6 +4,9 @@
 #include "Processor.h"
 
 
+#undef DEBUG_LOG_MODE
+#define DEBUG_LOG_MODE 1
+
 int main(int argc, const char* argv[]){
     if(argc - 1 < 1 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "/?") == 0) return printf("TODO HELP"), 1;
 
@@ -13,6 +16,7 @@ int main(int argc, const char* argv[]){
     std::pair<const char*, size_t> lftbRes = loadFileToBuf(f);
 
     const char* programm = lftbRes.first;
+    printd("Loaded from file. programm = \"%s\"\n", programm);
     fclose(f);
 
     Processor proc;
