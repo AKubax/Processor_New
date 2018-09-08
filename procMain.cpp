@@ -1,4 +1,3 @@
-#include <io.h>
 #include "../AKTools/akio.h"
 
 #include "Processor.h"
@@ -13,7 +12,7 @@ int main(int argc, const char* argv[]){
     FILE* f = fopen(argv[1], "rb");
     if(!f) return printf("TODO ERROR MESSAGE"), 2;
 
-    std::pair<const char*, size_t> lftbRes = loadFileToBuf(f);
+    std::pair<const char*, size_t> lftbRes = writeFileToBuf(f);
 
     const char* programm = lftbRes.first;
     printd("Loaded from file. programm = \"%s\"\n", programm);
