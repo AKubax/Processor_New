@@ -43,9 +43,9 @@ int Processor::execute(){
     for(;curPtr - startPtr < progSize_;){
         byte curCmd = *curPtr;
 
-        printd("curPtr = 0x%p; buf_ = 0x%p\n", curPtr, buf_);
+        printd("\ncurPtr = 0x%p; buf_ = 0x%p\n", curPtr, buf_);
 
-        #define DEF_CMD(num, name, compCode, procCode) else if( (printd("num = %d; curCmd = %d\n", num, curCmd), num == curCmd) ) { procCode; }
+        #define DEF_CMD(num, name, compCode, procCode) else if( (printd("numCmd = %d; curCmd = %d\n", num, curCmd), num == curCmd) ) { procCode; }
 
         if(0);
         #include "Commands.h"
