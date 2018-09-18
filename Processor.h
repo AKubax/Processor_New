@@ -13,8 +13,34 @@
 
 using byte = unsigned char;
 
+
+
+
+
+
+
 class Processor{
 private:
+
+    struct ProcStack{
+        double* startPtr;
+        size_t curSize;
+
+        ProcStack(byte* buf, size_t progSize):
+            startPtr ((double*) buf + progSize),
+            curSize (0)
+        {}
+
+        void push(double val){
+            startPtr[curSize] = val;
+            curSize++;
+        }
+
+        double pop(){
+            curSize--;
+            return startPtr[curSize];
+        }
+    };
 
     byte buf_[PROC_BUF_SIZE] = {};
     size_t progSize_ = 0;
@@ -36,6 +62,7 @@ int Processor::load(const char* inp, size_t count){
 
 int Processor::execute(){
 //    return printf("TODO execute func\n");
+    ProcStack theBuf(buf_, progSize_);
 
     byte* const startPtr = &(buf_[0]);
     byte* curPtr = startPtr;

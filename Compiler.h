@@ -1,23 +1,27 @@
 #include "../AKTools/akio.h"
-#include "AKTokenizer.h"
+#include "../AKTools/AKTokenizer.h"
 
 
 
-class Compiler{
-private:
-
-public:
-
-    void compile(std::vector<Token> inp, FILE* outF);
-};
 
 
-void Compiler::compile(std::vector<Token> inp, FILE* outF){
+int compile(std::vector<Token> inp, FILE* outFile);
+int compile(std::vector<Token> inp, FILE* outFile){
     Token* curPtr = inp.data();
 
-    for(; curPtr - inp.data() < inp.size() ;){
-        if(!curPtr[0].isStr) return printf("Invalid cmd. Cmd can't be a number\n"), 3;
+    std::vector<char> outBuf;
 
-        #define DEF_CMD(num, name, compCode, procCode)
+    for(; curPtr - inp.data() < (ptrdiff_t) inp.size() ;){
+        if(!curPtr[0].isStr) return printf("Invalid cmd (ñmd can't be a number)\n"), 3;
+
+        #define DEF_CMD(num, name, compCode, procCode) else if (strcmp(#name, curPtr[0].value.str)) { compCode; }
+
+        if(0);
+        #include "Commands.h"
+
+        else return printf("Invalid cmd. No such cmd = \"%s\"\n", curPtr[0].value.str), 3;
     }
+
+    writeBufToFile(outBuf.data(), outBuf.size(), outFile);
+    return 0;
 }

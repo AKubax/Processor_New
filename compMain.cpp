@@ -3,6 +3,7 @@
 
 #include "Compiler.h"
 
+void kostyl();
 void kostyl(){
     char c[2] = {1, 0};
     FILE* f = fopen("./noCode/proc.akprc", "wb");
@@ -22,17 +23,18 @@ int main(int argc, const char* argv[]){
     FILE* f = fopen(argv[1], "rb");
     if(!f) return printf("File containing program to compile could not have been opened\n"), 2;
 
-    const char* program = writeFileToBuf(f);
+    std::pair<const char*, size_t> wftbRes = writeFileToBuf(f);
     fclose(f);
 
-    std::vector<Token> tokens = tokenize(program);
+    char* fileBuf = (char*) calloc(wftbRes.second, 1);
+    memcpy(fileBuf, wftbRes.first, wftbRes.second);
 
+    std::vector<Token> tokens = tokenize(fileBuf);
 
     FILE* outF = fopen(argv[2], "wb");
     if (!outF)  return printf("The destination file could not have been opened\n"), 2;
 
-    Compiler comp;
-    comp.compile(tokens, outF);
+    compile(tokens, outF);
 
     fclose(outF);
 }
