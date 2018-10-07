@@ -18,7 +18,7 @@ int main(int argc, const char* argv[]){
     }
     printd("\n");
 
-    if(argc - 1 < 2 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "/?") == 0) return printf("TODO HELP"), 1;
+    if(argc - 1 < 1 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "/?") == 0) return printf("TODO HELP"), 1;  //TODO NORMAL LAUNCH
 
     FILE* f = fopen(argv[1], "rb");
     if(!f) return printf("File containing program to compile could not have been opened\n"), 2;
@@ -31,7 +31,7 @@ int main(int argc, const char* argv[]){
 
     std::vector<Token> tokens = tokenize(fileBuf);
 
-    FILE* outF = fopen(argv[2], "wb");
+    FILE* outF = fopen(/*argv[2]*/"test.akprc", "wb");
     if (!outF)  return printf("The destination file could not have been opened\n"), 2;
 
     compile(tokens, outF);
