@@ -3,3 +3,5 @@
 *.exe
 *.log
 *.akprc
+*.akasm
+fontDefSet.cpp
