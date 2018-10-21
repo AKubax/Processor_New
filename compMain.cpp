@@ -1,6 +1,8 @@
 #include "../AKTools/akio.h"
 #include "../AKTools/AKTokenizer.h"
 
+#define DEBUG_LOG_MODE 1
+
 #include "Compiler.h"
 
 void kostyl();

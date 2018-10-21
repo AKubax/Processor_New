@@ -3,8 +3,20 @@
 
 #include <math.h>
 #include <map>
+#include <algorithm>
 
 using byte = unsigned char;
+
+const size_t REG_NUM = 5;
+const char* REG_NAMES[REG_NUM] = { "DEL", "RAX", "RBX", "RCX", "RDX" };
+
+byte regToNum(const char* reg);
+byte regToNum(const char* reg){
+    for(size_t i = 0; i < REG_NUM; i++) if(strcmp(reg, REG_NAMES[i]) == 0) return i;
+
+    throw std::runtime_error("Reg with name such as arg to regToNum does not exist\n");
+    return -1;
+}
 
 std::map<const char*, size_t> makeLabels(std::vector<Token> inp);
 std::map<const char*, size_t> makeLabels(std::vector<Token> inp){

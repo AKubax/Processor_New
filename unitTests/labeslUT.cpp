@@ -32,7 +32,7 @@ bool compareMaps(std::map<const char*, size_t> m1, std::map<const char*, size_t>
     std::sort(arr1, arr1 + m1.size(), comparePairKeys);
     std::sort(arr2, arr2 + m2.size(), comparePairKeys);
 
-    for(int i = 0; i < m1.size(); i++){
+    for(size_t i = 0; i < m1.size(); i++){
         if( !comparePairs(arr1[i], arr2[i]) ) return false;
     }
 
