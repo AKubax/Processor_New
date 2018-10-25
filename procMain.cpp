@@ -3,12 +3,13 @@
 #include "../AKTools/akio.h"
 #include "../AKTools/AKString.h"
 
-FILE* DebugPathFile = 0;
+FILE* DebugLogPathFile = 0;
+bool DebugLogModeVar = 0;
 #undef DEBUG_LOG_MODE
-#define DEBUG_LOG_MODE 1
+#define DEBUG_LOG_MODE DebugLogModeVar
 
 #undef DEBUG_LOG_PATH
-#define DEBUG_LOG_PATH DebugPathFile
+#define DEBUG_LOG_PATH DebugLogPathFile
 
 
 
@@ -16,7 +17,8 @@ FILE* DebugPathFile = 0;
 
 
 int main(int argc, const char* argv[]){
-    DebugPathFile = stdout; // fopen("processorLog.log", "w");
+    bool DebugLogModeVar = argc - 1 >= 3;
+    DebugLogPathFile = stdout; // fopen("processorLog.log", "w");
 
     printd("argv [%d]:\n", argc);
     for(int i = 0; i < argc; i++){
@@ -24,11 +26,11 @@ int main(int argc, const char* argv[]){
     }
     printd("\n");
 
-    if(argc - 1 < 1 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "/?") == 0) return printf("TODO HELP"), 1;
+    if(argc - 1 < 2 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "/?") == 0) return printf("TODO HELP"), 1;
 
-    if(argc - 1 >= 2){
-       printd("Everything will be logged into \"%s\"\n", argv[2]);
-       DebugPathFile = fopen(argv[2], "w");
+    if(argc - 1 >= 3){
+        printd("Everything will be logged into \"%s\"\n", argv[3]);
+        DebugLogPathFile = fopen(argv[3], "w");
     }
 
     AKString logFileName = argv[1];
@@ -48,7 +50,7 @@ int main(int argc, const char* argv[]){
 
     printd("Starting proc:\n\n");
 
-    Processor proc;
+    Processor proc(argv[2]);
     proc.load(programm, wftbRes.second);
     proc.execute();
 }

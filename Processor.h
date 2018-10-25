@@ -25,6 +25,7 @@ const byte REGs_NUM = LAST_EL_REGs_NUM;
 
 class Processor{
 private:
+    FILE* outStream;
 
     double REGs[REGs_NUM] = {};
 
@@ -64,11 +65,16 @@ private:
     size_t progSize_ = 0;
 
 public:
+    Processor(const char* outS);
+
     int load(const char* inp, size_t count);
 
     int execute();
 };
 
+Processor::Processor(const char* outS):
+    outStream ( fopen(outS, "w") )
+{}
 
 int Processor::load(const char* inp, size_t count){
 //    return printf("TODO load func. inp is \"%s\"\n", inp), 0;

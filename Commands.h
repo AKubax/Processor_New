@@ -252,7 +252,7 @@ DEF_CMD(7, PUSH, {COMP_PUSH_FUNC();} , {PROC_PUSH_FUNC();} )
 
 DEF_CMD(8, POP,  {COMP_POP_FUNC();} , {PROC_POP_FUNC();} )
 
-DEF_CMD(9, OUT,  {EMIT_BYTE(9); curPtr++;}, { printf("%lf\n", theStack.pop()); curPtr++; } )
+DEF_CMD(9, OUT,  {EMIT_BYTE(9); curPtr++;}, { fprintf(outStream, "%lf\n", theStack.pop()); curPtr++; } )
 
 DEF_CMD(0xDA, NOP, {EMIT_BYTE(0xDA); EMIT_BYTE(0xDA); curPtr++;}, {curPtr+= 2;} )
 
