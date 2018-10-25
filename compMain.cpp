@@ -2,6 +2,7 @@
 #include "../AKTools/AKTokenizer.h"
 
 #define DEBUG_LOG_MODE 1
+#define DEBUG_LOG_PATH stdout
 
 #include "Compiler.h"
 

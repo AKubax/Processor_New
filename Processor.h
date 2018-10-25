@@ -1,4 +1,3 @@
-#include "../AKTools/akio.h"
 #include <stdexcept>
 
 
@@ -6,39 +5,58 @@
 #define DEBUG_LOG_MODE 1
 
 
-#define PROC_BUF_SIZE 1024
-
-#undef DEBUG_LOG_MODE
-#define DEBUG_LOG_MODE 1
+const size_t PROC_BUF_SIZE = 8192;
+const size_t PROC_STACK_SIZE = 32;
 
 using byte = unsigned char;
 
 
+#define DEF_REG(num, name) name = num,
 
+enum REG_NAMES{
+                #include "REGs.h"
+                LAST_EL_REGs_NUM
+              };
+#undef DEF_REG
 
+const byte REGs_NUM = LAST_EL_REGs_NUM;
 
 
 
 class Processor{
 private:
 
+    double REGs[REGs_NUM] = {};
+
     struct ProcStack{
         double* startPtr;
-        size_t curSize;
 
-        ProcStack(byte* buf, size_t progSize):
-            startPtr ((double*) buf + progSize),
-            curSize (0)
+        size_t curSize;
+        const size_t maxSize;
+
+        ProcStack(byte* buf):
+            startPtr ((double*) buf),
+            curSize (0),
+            maxSize (PROC_STACK_SIZE)
         {}
 
         void push(double val){
             startPtr[curSize] = val;
             curSize++;
+
+            if(curSize == maxSize - 1)  throw std::runtime_error("Processor stack overflow");
         }
 
         double pop(){
-            curSize--;
-            return startPtr[curSize];
+            return startPtr[--curSize];
+        }
+
+
+        void dump(){
+            printd("---\n");
+            printd("Processor stack dump:\n[");
+            for(double* ptr = startPtr; ptr < startPtr + curSize; ptr++) printd("%lf ", ptr[0]);
+            printd("]\n\n");
         }
     };
 
@@ -62,7 +80,8 @@ int Processor::load(const char* inp, size_t count){
 
 int Processor::execute(){
 //    return printf("TODO execute func\n");
-    ProcStack theBuf(buf_, progSize_);
+    ProcStack theStack(buf_ + progSize_);
+    double* RAM = (double*) buf_ + progSize_ + PROC_STACK_SIZE;
 
     byte* const startPtr = &(buf_[0]);
     byte* curPtr = startPtr;
@@ -78,6 +97,8 @@ int Processor::execute(){
         #include "Commands.h"
         #undef DEF_CMD
         else throw std::runtime_error("Cmd does not exist");
+
+        theStack.dump();
     }
     return 0;
 }

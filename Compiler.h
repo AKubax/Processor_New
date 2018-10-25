@@ -1,5 +1,5 @@
-#include "../AKTools/akio.h"
-#include "../AKTools/AKTokenizer.h"
+//#include "../AKTools/akio.h"
+//#include "../AKTools/AKTokenizer.h"
 
 #include <math.h>
 #include <map>
@@ -7,14 +7,25 @@
 
 using byte = unsigned char;
 
-const size_t REG_NUM = 5;
-const char* REG_NAMES[REG_NUM] = { "DEL", "RAX", "RBX", "RCX", "RDX" };
+#define DEF_REG(num, name) name = num,
+
+enum REG_NAMES{
+                #include "REGs.h"
+                LAST_EL_REGs_NUM
+              };
+#undef DEF_REG
+
+const byte REGs_NUM = LAST_EL_REGs_NUM;
 
 byte regToNum(const char* reg);
 byte regToNum(const char* reg){
-    for(size_t i = 0; i < REG_NUM; i++) if(strcmp(reg, REG_NAMES[i]) == 0) return i;
+    #define DEF_REG(num, name) else if(strcmp(reg, #name) == 0){ printd("Found REG '%s' == %d\n", #name, num); return num; }
 
-    throw std::runtime_error("Reg with name such as arg to regToNum does not exist\n");
+    if(0);
+    #include "REGs.h"
+    #undef DEF_REG
+
+    printf("REG with name '%s' not found\n", reg);
     return -1;
 }
 

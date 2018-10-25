@@ -1,8 +1,10 @@
 #include <TXLib.h>
+#include <algorithm>
+
+#include "../../AKTools/akio.h"
+#include "../../AKTools/AKTokenizer.h"
 
 #include "../Compiler.h"
-
-#include <algorithm>
 
 
 using myPair = std::pair<const char*, size_t>;

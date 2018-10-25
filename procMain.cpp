@@ -3,13 +3,21 @@
 #include "../AKTools/akio.h"
 #include "../AKTools/AKString.h"
 
-#include "Processor.h"
-
-
+FILE* DebugPathFile = 0;
 #undef DEBUG_LOG_MODE
 #define DEBUG_LOG_MODE 1
 
+#undef DEBUG_LOG_PATH
+#define DEBUG_LOG_PATH DebugPathFile
+
+
+
+#include "Processor.h"
+
+
 int main(int argc, const char* argv[]){
+    DebugPathFile = stdout; // fopen("processorLog.log", "w");
+
     printd("argv [%d]:\n", argc);
     for(int i = 0; i < argc; i++){
         printd("    %d: \"%s\"\n", i, argv[i]);
@@ -17,6 +25,11 @@ int main(int argc, const char* argv[]){
     printd("\n");
 
     if(argc - 1 < 1 || strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "/?") == 0) return printf("TODO HELP"), 1;
+
+    if(argc - 1 >= 2){
+       printd("Everything will be logged into \"%s\"\n", argv[2]);
+       DebugPathFile = fopen(argv[2], "w");
+    }
 
     AKString logFileName = argv[1];
     logFileName.change(logFileName.find('.') - logFileName.data(), logFileName.size(), ".log");
