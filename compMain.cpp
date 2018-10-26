@@ -1,22 +1,22 @@
 #include "../AKTools/akio.h"
-#include "../AKTools/AKTokenizer.h"
 
 FILE* DebugLogPathFile = 0;
 bool DebugLogModeVar = 0;
 #undef DEBUG_LOG_MODE
 #define DEBUG_LOG_MODE DebugLogModeVar
-
 #undef DEBUG_LOG_PATH
 #define DEBUG_LOG_PATH DebugLogPathFile
+
+#include "../AKTools/AKTokenizer.h"
 
 #include "Compiler.h"
 
 
 int main(int argc, const char* argv[]){
-    bool DebugLogModeVar = 1;//argc - 1 >= 3;
+    bool DebugLogModeVar = argc - 1 >= 3;
     DebugLogPathFile = stdout;
 
-    printd("argv [%d]:\n", argc);
+    printd("DebugLogModeVar = %d; DEBUG_LOG_MODE = %d; argv [%d]:\n", DebugLogModeVar, DEBUG_LOG_MODE, argc);
     for(int i = 0; i < argc; i++){
         printd("    %d: \"%s\"\n", i, argv[i]);
     }

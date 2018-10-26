@@ -1,8 +1,5 @@
 #include <stdexcept>
-
-
-#undef DEBUG_LOG_MODE
-#define DEBUG_LOG_MODE 1
+#include <math.h>
 
 
 const size_t PROC_BUF_SIZE = 8192;

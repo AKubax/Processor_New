@@ -1,13 +1,13 @@
-#include <TXLib.h>
+//#include <TXLib.h>
 
 #include "../AKTools/akio.h"
-#include "../AKTools/AKString.h"
+//#include "../AKTools/AKString.h"
+//#include <string>
 
 FILE* DebugLogPathFile = 0;
 bool DebugLogModeVar = 0;
 #undef DEBUG_LOG_MODE
 #define DEBUG_LOG_MODE DebugLogModeVar
-
 #undef DEBUG_LOG_PATH
 #define DEBUG_LOG_PATH DebugLogPathFile
 
@@ -17,10 +17,10 @@ bool DebugLogModeVar = 0;
 
 
 int main(int argc, const char* argv[]){
-    bool DebugLogModeVar = argc - 1 >= 3;
+    DebugLogModeVar = argc - 1 >= 3;
     DebugLogPathFile = stdout; // fopen("processorLog.log", "w");
 
-    printd("argv [%d]:\n", argc);
+    printd("DebugLogModeVar = %d; DEBUG_LOG_MODE = %d; argv [%d]:\n", DebugLogModeVar, DEBUG_LOG_MODE, argc);
     for(int i = 0; i < argc; i++){
         printd("    %d: \"%s\"\n", i, argv[i]);
     }
@@ -33,9 +33,9 @@ int main(int argc, const char* argv[]){
         DebugLogPathFile = fopen(argv[3], "w");
     }
 
-    AKString logFileName = argv[1];
-    logFileName.change(logFileName.find('.') - logFileName.data(), logFileName.size(), ".log");
-    printd("%s\n", logFileName.c_str());
+//    std::string logFileName = argv[1];
+//    logFileName.change(logFileName.find('.') - logFileName.data(), logFileName.size(), ".log");
+//    printd("%s\n", logFileName.c_str());
 
     FILE* f = fopen(argv[1], "rb");
     if(!f) return printf("File containing programm to execute could not have been able to be opened\n"), 2;
