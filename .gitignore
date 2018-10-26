@@ -2,6 +2,7 @@
 *.save
 *.exe
 *.log
-*.akprc
-*.akasm
 fontDefSet.cpp
+unitTests/processorTests/processorUTTempFile.txt
+.gitignore.cbTemp
+unitTests/compilerTests/compilerUTTempFile.akprc
