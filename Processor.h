@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <math.h>
+#include <stack>
 
 
 const size_t PROC_BUF_SIZE = 8192;
@@ -25,6 +26,8 @@ private:
     FILE* outStream;
 
     double REGs[REGs_NUM] = {};
+
+    std::stack<unsigned short> retStack;
 
     struct ProcStack{
         double* startPtr;

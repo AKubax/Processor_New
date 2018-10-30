@@ -13,7 +13,7 @@ bool DebugLogModeVar = 0;
 
 
 int main(int argc, const char* argv[]){
-    bool DebugLogModeVar = argc - 1 >= 3;
+    DebugLogModeVar = argc - 1 >= 3;
     DebugLogPathFile = stdout;
 
     printd("DebugLogModeVar = %d; DEBUG_LOG_MODE = %d; argv [%d]:\n", DebugLogModeVar, DEBUG_LOG_MODE, argc);
@@ -35,7 +35,9 @@ int main(int argc, const char* argv[]){
     std::pair<const char*, size_t> wftbRes = writeFileToBuf(f);
     fclose(f);
 
-    char* fileBuf = (char*) calloc(wftbRes.second, 1);
+    printd("writeFileToBuf returned:\n'%s'\n", wftbRes.first);
+
+    char* fileBuf = (char*) calloc(wftbRes.second + 1, 1);
     memcpy(fileBuf, wftbRes.first, wftbRes.second);
 
     std::vector<Token> tokens = tokenize(fileBuf);
@@ -46,6 +48,8 @@ int main(int argc, const char* argv[]){
     compile(tokens, outF);
 
     fclose(outF);
+
+    if(argc - 1 >= 3) fclose(DebugLogPathFile);
 }
 
 

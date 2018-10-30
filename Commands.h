@@ -62,13 +62,20 @@
 #define COMP_PUSH_FUNC()  {                                                                                                                                 \
                             printd("Begin of COMP_PUSH_FUNC()\n");                                                                                          \
                             curPtr++;                                                                                                                       \
+                            printd("Arg curPtr[0] == %s\n", curPtr[0].c_str());                                                                             \
                                                                                                                                                             \
                             if(!curPtr[0].isStr){                                                                                                           \
+                                printd("00s case\n");                                                                                                       \
+                                                                                                                                                            \
                                 EMIT_BYTE (7);                                                                                                              \
                                 EMIT_BYTE (PP_BIT_s);                                                                                                       \
                                 EMIT_DBL  (curPtr[0].value.dbl);                                                                                            \
+                                                                                                                                                            \
+                                printd("End of 00s case\n");                                                                                                \
                             }                                                                                                                               \
                             else if(curPtr[0].value.str[0] == '['){                                                                                         \
+                                printd("Found parenthesis\n");                                                                                              \
+                                                                                                                                                            \
                                 size_t len = strlen(curPtr[0].value.str);                                                                                   \
                                 if( (curPtr[0].value.str + len - 1)[0] != ']' ) throw std::runtime_error("Unclosed parenthesis or space in POP argument\n");\
                                                                                                                                                             \
@@ -227,6 +234,75 @@
                                                                      \
                                 }                                    \
 
+//-----------------------------------------------------------------------------
+
+#define COMP_JUMP_FUNC(sign)   {                                                                                            \
+                                    printd("COMP_JUMP_FUNC(%s) start\n", #sign);                                            \
+                                                                                                                             \
+                                    curPtr++;                                                                                \
+                                    if(!curPtr[0].isStr){                                                                    \
+                                        printf("Wrong argument (%lf) for jump (with '%s')\n", curPtr[0].value.dbl, #sign);   \
+                                        throw std::runtime_error("An error occured during compilation\n");                   \
+                                    }                                                                                        \
+                                    if(curPtr[0].value.str[0] != ':'){                                                       \
+                                        printf("Wrong argument \"%s\" for jump (with '%s')\n", curPtr[0].value.str, #sign);  \
+                                        throw std::runtime_error("An error occured during compilation\n");                   \
+                                    }                                                                                        \
+                                                                                                                             \
+                                    printd("Before emit: curPtr[0].value.str == '%s'; position = %u\n", curPtr[0].value.str, labels[curPtr[0].value.str]);               \
+                                                                                                                             \
+                                    EMIT_USHORT(labels[curPtr[0].value.str]);                                                \
+                                                                                                                             \
+                                    curPtr++;                                                                                \
+                                }
+
+#define PROC_JUMP_FUNC(sign)   {                                                                               \
+                                    printd("PROC_JUMP_FUNC(%s) start\n", #sign);                               \
+                                                                                                                \
+                                    curPtr++;                                                                   \
+                                                                                                                \
+                                    double second = theStack.pop();                                             \
+                                    double first  = theStack.pop();                                             \
+                                                                                                                \
+                                    unsigned short jPoint = GET_USHORT();                                       \
+                                                                                                                \
+                                    printd("%lf %s %lf : jPoint == %d\n", first, #sign, second, jPoint);        \
+                                                                                                                \
+                                    if(first sign second){                                                      \
+                                        printd("Jumping\n");                                                    \
+                                        curPtr = startPtr + jPoint;                                             \
+                                    }                                                                           \
+                                                                                                                \
+                                    else{                                                                       \
+                                        printd("Not jumping\n");                                                \
+                                        curPtr += sizeof(short);                                                \
+                                    }                                                                           \
+                                                                                                                \
+                                }
+
+#define PROC_JUMP_FUNC_()       {                                                                               \
+                                    printd("PROC_JUMP_FUNC_() start\n");                                        \
+                                                                                                                \
+                                    curPtr++;                                                                   \
+                                                                                                                \
+                                    unsigned short jPoint = GET_USHORT();                                       \
+                                                                                                                \
+                                    printd("jPoint == %d\n", jPoint);                                           \
+                                                                                                                \
+                                    printd("Jumping\n");                                                        \
+                                    curPtr = startPtr + jPoint;                                                 \
+                                                                                                                \
+                                }
+
+
+#define PROC_CALL_FUNC()        {                                                               \
+                                    printd("PROC_CALL_FUNC() start\n");                         \
+                                                                                                \
+                                    retStack.push(curPtr - startPtr + 1 + sizeof(short));       \
+                                                                                                \
+                                    PROC_JUMP_FUNC_();                                          \
+                                }
+
 
 
 // DEF_CMD(num, name, compCode, procCode)
@@ -256,7 +332,19 @@ DEF_CMD(9, OUT,  {EMIT_BYTE(9); curPtr++;}, { fprintf(outStream, "%lf\n", theSta
 
 DEF_CMD(0xDA, NOP, {EMIT_BYTE(0xDA); EMIT_BYTE(0xDA); curPtr++;}, {curPtr+= 2;} )
 
+DEF_CMD(10, JA,   { EMIT_BYTE(10); COMP_JUMP_FUNC(>);  }, { PROC_JUMP_FUNC(>);  } )
 
+DEF_CMD(11, JEA,  { EMIT_BYTE(11); COMP_JUMP_FUNC(>=); }, { PROC_JUMP_FUNC(>=); } )
+
+DEF_CMD(12, JB,   { EMIT_BYTE(12); COMP_JUMP_FUNC(<);  }, { PROC_JUMP_FUNC(<);  } )
+
+DEF_CMD(13, JEB,  { EMIT_BYTE(13); COMP_JUMP_FUNC(<=); }, { PROC_JUMP_FUNC(<=); } )
+
+DEF_CMD(14, JMP,  { EMIT_BYTE(14); COMP_JUMP_FUNC();   }, { PROC_JUMP_FUNC_();  } )
+
+DEF_CMD(15, CALL, { EMIT_BYTE(15); COMP_JUMP_FUNC();   }, { PROC_CALL_FUNC();   } )
+
+DEF_CMD(16, RET,  { EMIT_BYTE(16); curPtr++;           }, { curPtr = startPtr + retStack.top(); retStack.pop();} )
 
 
 

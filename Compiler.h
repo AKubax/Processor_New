@@ -4,6 +4,7 @@
 #include <math.h>
 #include <map>
 #include <algorithm>
+#include <string>
 
 using byte = unsigned char;
 
@@ -29,19 +30,32 @@ byte regToNum(const char* reg){
     return -1;
 }
 
-std::map<const char*, size_t> makeLabels(std::vector<Token> inp);
-std::map<const char*, size_t> makeLabels(std::vector<Token> inp){
+void dumpMap(std::map<std::string, size_t> inp);
+void dumpMap(std::map<std::string, size_t> inp){
+    printd("Dump of map{\n");
+    for(auto it : inp) printd("\t'%s' : %u\n", it.first.c_str(), it.second);
+    printd("}\n");
+}
+
+
+std::map<std::string, size_t> makeLabels(std::vector<Token> inp);
+std::map<std::string, size_t> makeLabels(std::vector<Token> inp){
+
+    printd("{----------------------------------------------------------------------------\n\
+    !Pre-compile                                                                                      \n\
+    }----------------------------------------------------------------------------");
+
 
     Token* curPtr = inp.data();
 
     std::vector<byte> outBuf;
-    std::map<const char*, size_t> labels;// = makeLabels(inp);
+    std::map<std::string, size_t> labels;// = makeLabels(inp);
 
     for(; curPtr - inp.data() < (ptrdiff_t) inp.size() ;){
-//        if(curPtr[0].isStr) printd("New iteration of compiling loop. Token = '%s'\n", curPtr[0].value.str);
-//        else                printd("!!!TOKEN IS NOT A STRING!!!\n#New iteration of compiling loop. Token = '%lf'\n", curPtr[0].value.dbl);
+        if(curPtr[0].isStr) printd("New iteration of PRE-compiling loop. Token = '%s'\n", curPtr[0].value.str);
+        else                printd("!!!TOKEN IS NOT A STRING!!!\n#New iteration of PRE-compiling loop. Token = '%lf'\n", curPtr[0].value.dbl);
 
-        if(!curPtr[0].isStr) return printf("Invalid cmd (cmd can't be a number)\n"), std::map<const char*, size_t>();
+        if(!curPtr[0].isStr) return printf("Invalid cmd (cmd can't be a number)\n"), std::map<std::string, size_t>();
 
         if(curPtr[0].value.str[0] == ':'){
             labels[curPtr[0].value.str] = outBuf.size();
@@ -58,7 +72,7 @@ std::map<const char*, size_t> makeLabels(std::vector<Token> inp){
         #include "Commands.h"
         #undef DEF_CMD
 
-        else return printf("Invalid cmd. No such cmd = \"%s\"\n", curPtr[0].value.str), std::map<const char*, size_t>();
+        else return printf("Invalid cmd. No such cmd = \"%s\"\n", curPtr[0].value.str), std::map<std::string, size_t>();
     }
 
     return labels;
@@ -66,6 +80,10 @@ std::map<const char*, size_t> makeLabels(std::vector<Token> inp){
 
 int compile(std::vector<Token> inp, FILE* outFile);
 int compile(std::vector<Token> inp, FILE* outFile){
+
+    printd("{----------------------------------------------------------------------------\n\
+    Compile                                                                                      \n\
+}----------------------------------------------------------------------------");
 
     printd("\n\n---\n#Compile func start\n#inp = {");
     for(auto& el : inp) el.isStr? printd(" '%s',", el.value.str) : printd(" %lf,", el.value.dbl);
@@ -75,15 +93,20 @@ int compile(std::vector<Token> inp, FILE* outFile){
     Token* curPtr = inp.data();
 
     std::vector<byte> outBuf;
-    std::map<const char*, size_t> labels = makeLabels(inp);
+    std::map<std::string, size_t> labels = makeLabels(inp);
 
     for(; curPtr - inp.data() < (ptrdiff_t) inp.size() ;){
+        dumpMap(labels);
+
+//        printf("printd here\n");
         if(curPtr[0].isStr) printd("New iteration of compiling loop. Token = '%s'\n", curPtr[0].value.str);
         else                printd("!!!TOKEN IS NOT A STRING!!!\n#New iteration of compiling loop. Token = '%lf'\n", curPtr[0].value.dbl);
 
         if(!curPtr[0].isStr) return printf("Invalid cmd (cmd can't be a number)\n"), 3;
 
         if(curPtr[0].value.str[0] == ':'){
+            printd("'%s' is a label. It's position is %u\n", curPtr[0].value.str, labels[curPtr[0].value.str]);
+
             curPtr++;
             continue;
         }
