@@ -78,6 +78,31 @@ std::map<std::string, size_t> makeLabels(std::vector<Token> inp){
     return labels;
 }
 
+//std::vector<Token> emitMacros(const std::vector<Token> inp){
+//    std::vector<Token> retVal;
+//
+//    for(Token* ptr = inp.data(); ptr < inp.data() + inp.size(); ptr++){
+//        if( !(ptr[0].isStr) ){
+//            retVal.push_back(ptr[0]);
+//            continue;
+//        }
+//        #define DEF_MACROS(name, numArgs, code) {
+//            else if(strcmp(ptr[0].value.str, #name) == 0) {
+//                const std::vector<Token> codeTokenized = tokenize(code);
+//                for(Token* ptrInMacrosCode = codeTokenized.data(); ptrInMacrosCode < codeTokenized.data() + codeTokenized.size(); ptrInMacrosCode++){
+//                    int resAtoi = 0;
+//                    if(ptrInMacrosCode[0].value.str[0] == '$' && (resAtoi = atoi(ptrInMacrosCode[0].value.str + 1)) != 0 && (resAtoi = atoi(ptrInMacrosCode[0].value.str + 1)) <= numArgs){
+//                        retVal.push_back(ptr[resAtoi]);
+//                    }
+//                    else retVal.push_back(ptrInMacrosCode[0]);
+//                }
+//
+//                ptr += numArgs;
+//            }
+//
+//    }
+//}
+
 int compile(std::vector<Token> inp, FILE* outFile);
 int compile(std::vector<Token> inp, FILE* outFile){
 

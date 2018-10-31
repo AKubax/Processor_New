@@ -1,0 +1,38 @@
+CALL :MAIN
+
+:MULT
+    PUSH RAX
+    DUP
+    PUSH 1
+
+    JA :L1
+        PUSH RBX
+        OUT
+
+        EXIT
+    :L1
+
+    PUSH RBX
+    MUL
+
+    POP RBX
+
+    PUSH RAX
+    PUSH -1
+    ADD
+    POP RAX
+
+    CALL :MULT
+
+RET
+
+
+
+:MAIN
+    INP
+    POP RAX
+
+    PUSH 1
+    POP RBX
+
+RET

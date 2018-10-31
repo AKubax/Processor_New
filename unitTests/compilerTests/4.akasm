@@ -1,0 +1,113 @@
+INP
+POP RAX
+INP
+POP RBX
+INP
+POP RCX
+
+JMP :MAIN
+
+:COUNT_D
+    PUSH RBX
+    DUP
+    MUL
+
+    PUSH -4
+    PUSH RAX
+    PUSH RCX
+    MUL
+    MUL
+
+    ADD
+
+    POP RDX
+RET
+
+:ZERO_ROOTS
+    PUSH 0
+    OUT
+
+    EXIT
+RET
+
+:ONE_ROOT
+    PUSH 1
+    OUT
+
+    OUT
+
+    EXIT
+RET
+
+:TWO_ROOTS
+    PUSH 2
+    OUT
+
+    OUT
+    OUT
+
+    EXIT
+RET
+
+
+:MAIN
+    CALL :COUNT_D
+
+    PUSH RDX
+    PUSH 0
+
+    JEA :L1
+        CALL :ZERO_ROOTS
+    :L1
+
+
+    PUSH RDX
+    PUSH 0
+
+    JEB :L2
+        PUSH -1
+        PUSH RBX
+        MUL
+
+        PUSH RDX
+        SQRT
+
+        ADD
+
+        PUSH 2
+        PUSH RAX
+        MUL
+
+        DIV
+
+        PUSH -1
+        PUSH RBX
+        MUL
+
+        PUSH RDX
+        SQRT
+
+        SUB
+
+        PUSH 2
+        PUSH RAX
+        MUL
+
+        DIV
+
+        CALL :TWO_ROOTS
+    :L2
+
+    PUSH -1
+    PUSH RBX
+    MUL
+
+    PUSH 2
+    PUSH RAX
+    MUL
+
+    DIV
+
+    CALL :ONE_ROOT
+
+RET

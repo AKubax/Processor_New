@@ -346,6 +346,10 @@ DEF_CMD(15, CALL, { EMIT_BYTE(15); COMP_JUMP_FUNC();   }, { PROC_CALL_FUNC();   
 
 DEF_CMD(16, RET,  { EMIT_BYTE(16); curPtr++;           }, { curPtr = startPtr + retStack.top(); retStack.pop();} )
 
+DEF_CMD(17, INP,  { EMIT_BYTE(17); curPtr++;           }, { double chislo = 0; scanf("%lf", &chislo); theStack.push(chislo); curPtr++; } )
+
+DEF_CMD(18, DUP,  { EMIT_BYTE(18); curPtr++;           }, { double n = theStack.pop(); theStack.push(n); theStack.push(n);   curPtr++; } )
+
 
 
 //-----------------------------------------------------------------------------
