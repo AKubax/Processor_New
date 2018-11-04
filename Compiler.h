@@ -78,8 +78,8 @@ std::map<std::string, size_t> makeLabels(std::vector<Token> inp){
     return labels;
 }
 
-std::vector<Token> emitMacros(const std::vector<Token> inp);
-std::vector<Token> emitMacros(const std::vector<Token> inp){
+std::vector<Token> emitMacros(const std::vector<Token> inp, unsigned int calledFrom = -1);
+std::vector<Token> emitMacros(const std::vector<Token> inp, unsigned int calledFrom/* = -1 */){
     std::vector<Token> retVal;
 
     for(const Token* ptr = inp.data(); ptr < inp.data() + inp.size(); ptr++){
@@ -87,11 +87,12 @@ std::vector<Token> emitMacros(const std::vector<Token> inp){
             retVal.push_back(ptr[0]);
             continue;
         }
-        #define DEF_MACRO(name, numArgs, code)                                                                                                                                                \
-            else if(strcmp(ptr[0].value.str, #name) == 0) {                                                                                                                                    \
+        #define DEF_MACRO(num, name, numArgs, code)                                                                                                                                                \
+            else if(num < calledFrom && strcmp(ptr[0].value.str, #name) == 0) {                                                                                                                                    \
                 printd("Found macro '%s'\n", #name);                                                                                                                                           \
                                                                                                                                                                                                \
-                const std::vector<Token> codeTokenized = tokenize(code);                                                                                                                       \
+                std::vector<Token> codeTokenized = tokenize(code);                                                                                                                       \
+                codeTokenized = emitMacros(codeTokenized, num);                                                                                                                          \
                 for(const Token* ptrInMacrosCode = codeTokenized.data(); ptrInMacrosCode < codeTokenized.data() + codeTokenized.size(); ptrInMacrosCode++){                                    \
                     printd("Token in macro code is '%s'\n", ptrInMacrosCode[0].c_str());                                                                                                       \
                                                                                                                                                                                                \
